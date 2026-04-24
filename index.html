@@ -899,10 +899,11 @@ function renderInvoices(invoices, container) {
 }
 
 function invoiceCard(inv) {
-  const href = inv.file ? `href="${inv.file}" target="_blank"` : '';
+  const onclick = inv.file ? `onclick="window.open('${inv.file}','_blank','noopener');return false;"` : '';
+  const href = inv.file ? `href="${inv.file}"` : '';
   const amount = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'}).format(inv.total);
   return `
-    <a class="invoice-item" ${href}>
+    <a class="invoice-item" ${href} ${onclick}>
       <div class="invoice-icon">INV<br/>#${inv.invoice_num}</div>
       <div class="invoice-body">
         <div class="invoice-num">Invoice #${inv.invoice_num}</div>
