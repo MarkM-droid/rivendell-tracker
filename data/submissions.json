@@ -12,5 +12,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "6a6f30ed-22b4-42a1-9e12-2acb9f3c7efa",
+    "timestamp": "2026-04-24T22:01:30.710Z",
+    "type": "hours",
+    "date": "2026-04-24",
+    "project": "Other",
+    "hours": 2,
+    "description": "Agentic Merchandising",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
