@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Rivendell" />
+  <meta name="theme-color" content="#1e3a5f" />
+  <title>Rivendell Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1e3a5f;
+      --blue: #3b82f6;
+      --blue-dark: #2563eb;
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --success: #38a169;
+      --warning: #d69e2e;
+      --danger: #e53e3e;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.10);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LAYOUT ── */
+    #app { display: flex; flex-direction: column; height: 100%; }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 16px 20px 12px;
+      padding-top: calc(16px + env(safe-area-inset-top, 0px));
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.03em; }
+    header .subtitle { font-size: 0.75rem; opacity: 0.7; margin-top: 2px; }
+
+    #sync-status {
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    #sync-status.syncing { background: rgba(59,130,246,0.5); }
+    #sync-status.error   { background: rgba(229,62,62,0.5); }
+    #sync-status.ok      { background: rgba(56,161,105,0.4); }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px;
+      padding-bottom: calc(80px + var(--safe-bottom));
+    }
+
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+      z-index: 100;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    }
+    nav button {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 10px 4px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--muted);
+      font-size: 0.65rem;
+      font-weight: 500;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 56px;
+    }
+    nav button.active { color: var(--blue); }
+    nav button svg { width: 22px; height: 22px; }
+
+    /* ── TABS ── */
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--navy); }
+
+    /* ── FORM ELEMENTS ── */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--text);
+      background: white;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23718096' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      width: 100%;
+    }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:active { background: var(--blue-dark); transform: scale(0.98); }
+    .btn-primary:disabled { background: #a0aec0; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:active { background: #e2e8f0; }
+
+    /* ── RECEIPT BUTTON ── */
+    .receipt-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .receipt-btn.has-photo { border-color: var(--success); color: var(--success); background: rgba(56,161,105,0.06); }
+    .receipt-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    #receipt-input { display: none; }
+
+    /* ── INVOICE LIST ── */
+    .section-header {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 20px 0 8px;
+    }
+    .invoice-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.1s;
+    }
+    .invoice-item:active { transform: scale(0.98); }
+    .invoice-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--navy);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .invoice-body { flex: 1; min-width: 0; }
+    .invoice-num { font-size: 0.75rem; color: var(--muted); margin-bottom: 2px; }
+    .invoice-desc { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .invoice-date { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .invoice-right { text-align: right; flex-shrink: 0; }
+    .invoice-amount { font-size: 1rem; font-weight: 700; color: var(--navy); }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+    .status-Draft    { background: #fefcbf; color: #744210; }
+    .status-Submitted { background: #bee3f8; color: #2a4365; }
+    .status-Paid     { background: #c6f6d5; color: #22543d; }
+
+    /* ── HISTORY LIST ── */
+    .month-group { margin-bottom: 24px; }
+    .month-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+    .history-item {
+      background: var(--card);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .history-icon {
+      width: 38px; height: 38px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .history-icon.hours   { background: rgba(59,130,246,0.12); color: var(--blue); }
+    .history-icon.expense { background: rgba(56,161,105,0.12); color: var(--success); }
+    .history-icon svg { width: 18px; height: 18px; }
+    .history-body { flex: 1; min-width: 0; }
+    .history-desc { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .history-amount { font-weight: 700; font-size: 0.95rem; text-align: right; flex-shrink: 0; }
+    .history-amount.hours-val { color: var(--blue); }
+    .history-amount.expense-val { color: var(--success); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+    .empty-state svg { width: 56px; height: 56px; margin: 0 auto 12px; opacity: 0.3; display: block; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: calc(72px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2d3748;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.success { background: var(--success); }
+    #toast.error   { background: var(--danger); }
+
+    /* ── MILEAGE FIELD ── */
+    #mileage-row { display: none; }
+    #mileage-row.visible { display: block; }
+    .mileage-calc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: var(--bg);
+      border-radius: 6px;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .btn.loading .spinner { display: block; }
+    .btn.loading .btn-label { opacity: 0.7; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <h1>⚔️ Rivendell Tracker</h1>
+      <div class="subtitle">Rivendell Advisors LLC</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div id="sync-status">● Offline</div>
+      <button onclick="showTokenSetup()" style="background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:30px;height:30px;color:white;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- TOKEN SETUP MODAL -->
+  <div id="token-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:20px">
+    <div style="background:white;border-radius:16px;padding:24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <h2 style="font-size:1.1rem;color:#1e3a5f;margin-bottom:8px">GitHub Token</h2>
+      <p style="font-size:0.85rem;color:#718096;margin-bottom:16px">Enter your GitHub personal access token to enable cloud sync. Stored locally on this device only.</p>
+      <input type="password" id="token-input" placeholder="ghp_..." style="width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.9rem;margin-bottom:12px;font-family:monospace" />
+      <div style="display:flex;gap:8px">
+        <button onclick="saveToken()" style="flex:1;padding:12px;background:#3b82f6;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">Save</button>
+        <button onclick="closeTokenModal()" style="flex:1;padding:12px;background:#f0f4f8;color:#1a202c;border:1.5px solid #e2e8f0;border-radius:8px;font-weight:600;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content">
+
+    <!-- ── LOG HOURS TAB ── -->
+    <div class="tab active" id="tab-hours">
+      <div class="card">
+        <h2>Log Hours</h2>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="h-date" />
+          </div>
+          <div class="form-group">
+            <label>Hours</label>
+            <input type="number" id="h-hours" min="0.5" max="24" step="0.5" placeholder="0.0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Project</label>
+          <select id="h-project">
+            <option value="">Select project…</option>
+            <option value="Agentic Merchandising - Dallas">Agentic Merchandising - Dallas</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="h-desc" placeholder="What did you work on?"></textarea>
+        </div>
+        <button class="btn btn-primary" id="btn-log-hours" onclick="submitHours()">
+          <span class="spinner"></span>
+          <span class="btn-label">Save Hours</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── LOG EXPENSE TAB ── -->
+    <div class="tab" id="tab-expense">
+      <div class="card">
+        <h2>Log Expense</h2>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="e-date" />
+          </div>
+          <div class="form-group">
+            <label>Expense Type</label>
+            <select id="e-type" onchange="onExpenseTypeChange()">
+              <option value="">Select type…</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Meal">Meal</option>
+              <option value="Parking">Parking</option>
+              <option value="Mileage">Mileage</option>
+              <option value="Air">Air</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" id="amount-row">
+          <label>Amount ($)</label>
+          <input type="number" id="e-amount" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group" id="mileage-row">
+          <label>Miles</label>
+          <input type="number" id="e-miles" min="0" step="0.1" placeholder="0" oninput="calcMileage()" />
+          <div class="mileage-calc" id="mileage-calc">0 miles × $0.72 = <strong>$0.00</strong></div>
+        </div>
+        <div class="form-group">
+          <label>Project</label>
+          <select id="e-project">
+            <option value="">Select project…</option>
+            <option value="Agentic Merchandising - Dallas">Agentic Merchandising - Dallas</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="e-desc" placeholder="What was this expense for?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Receipt</label>
+          <input type="file" id="receipt-input" accept="image/*" capture="environment" onchange="onReceiptSelected()" />
+          <button type="button" class="receipt-btn" id="receipt-btn" onclick="document.getElementById('receipt-input').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span id="receipt-label">Take photo or choose file</span>
+          </button>
+        </div>
+        <button class="btn btn-primary" id="btn-log-expense" onclick="submitExpense()">
+          <span class="spinner"></span>
+          <span class="btn-label">Save Expense</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── INVOICES TAB ── -->
+    <div class="tab" id="tab-invoices">
+      <div id="invoices-content">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <p>Loading invoices…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY TAB ── -->
+    <div class="tab" id="tab-history">
+      <div id="history-content">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <p>No entries yet. Start logging!</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav>
+    <button class="active" onclick="switchTab('hours', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Log Hours
+    </button>
+    <button onclick="switchTab('expense', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <line x1="2" y1="10" x2="22" y2="10"/>
+      </svg>
+      Log Expense
+    </button>
+    <button onclick="switchTab('invoices', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      Invoices
+    </button>
+    <button onclick="switchTab('history', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="8" y1="6" x2="21" y2="6"/>
+        <line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/>
+        <line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+      History
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONSTANTS ──
+const GITHUB_OWNER = 'MarkM-droid';
+const GITHUB_REPO  = 'rivendell-tracker';
+const MILEAGE_RATE = 0.72;
+const BASE_PATH    = '/rivendell-tracker';
+
+function getToken() {
+  return localStorage.getItem('rt_gh_token') || '';
+}
+function setToken(t) {
+  localStorage.setItem('rt_gh_token', t.trim());
+}
+
+// ── STATE ──
+let receiptData = null;
+let receiptFilename = '';
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  // Set today as default dates
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('h-date').value = today;
+  document.getElementById('e-date').value = today;
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(`${BASE_PATH}/sw.js`).catch(console.warn);
+  }
+
+  // Load data
+  loadInvoices();
+  renderHistory();
+  updateSyncStatus();
+});
+
+// ── TAB SWITCHING ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'invoices') loadInvoices();
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 3000);
+}
+
+// ── SYNC STATUS ──
+function updateSyncStatus() {
+  const queue = getQueue();
+  const el = document.getElementById('sync-status');
+  if (queue.length > 0) {
+    el.textContent = `● ${queue.length} queued`;
+    el.className = 'error';
+  } else {
+    el.textContent = '● Synced';
+    el.className = 'ok';
+  }
+}
+
+// ── LOCAL STORAGE ──
+function getEntries() {
+  try { return JSON.parse(localStorage.getItem('rt_entries') || '[]'); } catch { return []; }
+}
+function saveEntries(arr) { localStorage.setItem('rt_entries', JSON.stringify(arr)); }
+
+function getQueue() {
+  try { return JSON.parse(localStorage.getItem('rt_queue') || '[]'); } catch { return []; }
+}
+function saveQueue(arr) { localStorage.setItem('rt_queue', JSON.stringify(arr)); }
+
+function enqueue(entry) {
+  const q = getQueue();
+  q.push(entry);
+  saveQueue(q);
+}
+
+// ── UUID ──
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+// ── EXPENSE TYPE CHANGE ──
+function onExpenseTypeChange() {
+  const type = document.getElementById('e-type').value;
+  const amountRow  = document.getElementById('amount-row');
+  const mileageRow = document.getElementById('mileage-row');
+  if (type === 'Mileage') {
+    amountRow.style.display = 'none';
+    mileageRow.classList.add('visible');
+    calcMileage();
+  } else {
+    amountRow.style.display = 'block';
+    mileageRow.classList.remove('visible');
+  }
+}
+
+function calcMileage() {
+  const miles = parseFloat(document.getElementById('e-miles').value) || 0;
+  const amount = miles * MILEAGE_RATE;
+  document.getElementById('mileage-calc').innerHTML =
+    `${miles} miles × $${MILEAGE_RATE.toFixed(2)} = <strong>$${amount.toFixed(2)}</strong>`;
+}
+
+// ── RECEIPT HANDLING ──
+function onReceiptSelected() {
+  const file = document.getElementById('receipt-input').files[0];
+  if (!file) return;
+  receiptFilename = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    receiptData = e.target.result; // full data URL
+    const btn = document.getElementById('receipt-btn');
+    btn.classList.add('has-photo');
+    document.getElementById('receipt-label').textContent = '✓ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SUBMIT HOURS ──
+async function submitHours() {
+  const date    = document.getElementById('h-date').value;
+  const hours   = parseFloat(document.getElementById('h-hours').value);
+  const project = document.getElementById('h-project').value;
+  const desc    = document.getElementById('h-desc').value.trim();
+
+  if (!date)    return showToast('Please select a date', 'error');
+  if (!hours || hours <= 0) return showToast('Please enter hours', 'error');
+  if (!project) return showToast('Please select a project', 'error');
+  if (!desc)    return showToast('Please add a description', 'error');
+
+  const entry = {
+    id: uuid(),
+    timestamp: new Date().toISOString(),
+    type: 'hours',
+    date, project, hours, description: desc,
+    expense_type: '', amount: 0, miles: 0,
+    receipt_filename: '', receipt_data: ''
+  };
+
+  setLoading('btn-log-hours', true);
+  saveLocal(entry);
+  await syncEntry(entry);
+  setLoading('btn-log-hours', false);
+
+  // Reset form
+  document.getElementById('h-hours').value = '';
+  document.getElementById('h-desc').value = '';
+  document.getElementById('h-project').value = '';
+  showToast('Hours logged ✓', 'success');
+  renderHistory();
+}
+
+// ── SUBMIT EXPENSE ──
+async function submitExpense() {
+  const date    = document.getElementById('e-date').value;
+  const type    = document.getElementById('e-type').value;
+  const project = document.getElementById('e-project').value;
+  const desc    = document.getElementById('e-desc').value.trim();
+
+  if (!date)    return showToast('Please select a date', 'error');
+  if (!type)    return showToast('Please select expense type', 'error');
+  if (!project) return showToast('Please select a project', 'error');
+
+  let amount = 0, miles = 0;
+  if (type === 'Mileage') {
+    miles = parseFloat(document.getElementById('e-miles').value) || 0;
+    if (miles <= 0) return showToast('Please enter miles', 'error');
+    amount = +(miles * MILEAGE_RATE).toFixed(2);
+  } else {
+    amount = parseFloat(document.getElementById('e-amount').value) || 0;
+    if (amount <= 0) return showToast('Please enter amount', 'error');
+  }
+
+  const id = uuid();
+  let receiptFilenameToSave = '';
+  let receiptBase64 = '';
+  if (receiptData) {
+    receiptFilenameToSave = id + '.jpg';
+    receiptBase64 = receiptData.split(',')[1] || '';
+  }
+
+  const entry = {
+    id, timestamp: new Date().toISOString(),
+    type: 'expense', date, project,
+    hours: 0, description: desc,
+    expense_type: type, amount, miles,
+    receipt_filename: receiptFilenameToSave,
+    receipt_data: receiptBase64
+  };
+
+  setLoading('btn-log-expense', true);
+  saveLocal(entry);
+  await syncEntry(entry);
+  setLoading('btn-log-expense', false);
+
+  // Reset form
+  document.getElementById('e-type').value = '';
+  document.getElementById('e-amount').value = '';
+  document.getElementById('e-miles').value = '';
+  document.getElementById('e-desc').value = '';
+  document.getElementById('e-project').value = '';
+  onExpenseTypeChange();
+  receiptData = null;
+  receiptFilename = '';
+  document.getElementById('receipt-btn').classList.remove('has-photo');
+  document.getElementById('receipt-label').textContent = 'Take photo or choose file';
+  document.getElementById('receipt-input').value = '';
+  showToast('Expense logged ✓', 'success');
+  renderHistory();
+}
+
+// ── SAVE LOCAL ──
+function saveLocal(entry) {
+  const entries = getEntries();
+  // Strip receipt_data for local storage (save space)
+  const local = {...entry, receipt_data: entry.receipt_data ? '[photo]' : ''};
+  entries.unshift(local);
+  saveEntries(entries);
+}
+
+// ── SYNC TO GITHUB ──
+async function syncEntry(entry) {
+  const el = document.getElementById('sync-status');
+  el.textContent = '● Syncing…';
+  el.className = 'syncing';
+  try {
+    await uploadSubmission(entry);
+    if (entry.receipt_data) {
+      await uploadReceipt(entry.id, entry.receipt_data);
+    }
+    updateSyncStatus();
+  } catch (err) {
+    console.error('Sync failed:', err);
+    enqueue(entry);
+    updateSyncStatus();
+    showToast('Saved locally (offline)', '');
+  }
+}
+
+async function ghFetch(path, method, body) {
+  const token = getToken();
+  if (!token) throw new Error('No GitHub token configured');
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/${path}`, {
+    method,
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`GitHub API ${res.status}: ${err}`);
+  }
+  return res.json();
+}
+
+async function uploadSubmission(entry) {
+  // GET current file
+  let sha = null, existing = [];
+  try {
+    const current = await ghFetch('contents/data/submissions.json', 'GET');
+    sha = current.sha;
+    const decoded = atob(current.content.replace(/\n/g,''));
+    existing = JSON.parse(decoded);
+  } catch (e) { /* file doesn't exist yet or parse error */ }
+
+  // Strip receipt_data from stored JSON to keep file small
+  const toStore = {...entry, receipt_data: ''};
+  existing.push(toStore);
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
+  const body = {
+    message: `Add ${entry.type} entry ${entry.id.slice(0,8)} (${entry.date})`,
+    content,
+    ...(sha ? {sha} : {})
+  };
+  await ghFetch('contents/data/submissions.json', 'PUT', body);
+}
+
+async function uploadReceipt(id, base64DataUrl) {
+  // base64DataUrl is the raw base64 (after stripping data:image/...;base64,)
+  const content = base64DataUrl.includes(',') ? base64DataUrl.split(',')[1] : base64DataUrl;
+  const body = {
+    message: `Add receipt for ${id.slice(0,8)}`,
+    content
+  };
+  await ghFetch(`contents/data/receipts/${id}.jpg`, 'PUT', body);
+}
+
+// ── LOAD INVOICES ──
+async function loadInvoices() {
+  const container = document.getElementById('invoices-content');
+  try {
+    const res = await fetch(`data/invoices.json?t=${Date.now()}`);
+    const invoices = await res.json();
+    renderInvoices(invoices, container);
+  } catch {
+    // Try from GitHub
+    try {
+      const gh = await ghFetch('contents/data/invoices.json', 'GET');
+      const decoded = JSON.parse(atob(gh.content.replace(/\n/g,'')));
+      renderInvoices(decoded, container);
+    } catch {
+      container.innerHTML = '<div class="empty-state"><p>Could not load invoices.</p></div>';
+    }
+  }
+}
+
+function renderInvoices(invoices, container) {
+  if (!invoices.length) {
+    container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No invoices yet.</p></div>';
+    return;
+  }
+
+  const drafts    = invoices.filter(i => i.status === 'Draft');
+  const submitted = invoices.filter(i => i.status === 'Submitted');
+  const paid      = invoices.filter(i => i.status === 'Paid');
+
+  let html = '';
+  if (drafts.length) {
+    html += `<div class="section-header">Drafts</div>`;
+    html += drafts.map(invoiceCard).join('');
+  }
+  if (submitted.length || paid.length) {
+    html += `<div class="section-header">Submitted</div>`;
+    html += [...submitted, ...paid].map(invoiceCard).join('');
+  }
+  container.innerHTML = html;
+}
+
+function invoiceCard(inv) {
+  const href = inv.file ? `href="${inv.file}" target="_blank"` : '';
+  const amount = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'}).format(inv.total);
+  return `
+    <a class="invoice-item" ${href}>
+      <div class="invoice-icon">INV<br/>#${inv.invoice_num}</div>
+      <div class="invoice-body">
+        <div class="invoice-num">Invoice #${inv.invoice_num}</div>
+        <div class="invoice-desc">${inv.description || ''}</div>
+        <div class="invoice-date">${formatDate(inv.date)}</div>
+      </div>
+      <div class="invoice-right">
+        <div class="invoice-amount">${amount}</div>
+        <span class="status-badge status-${inv.status}">${inv.status}</span>
+      </div>
+    </a>`;
+}
+
+// ── RENDER HISTORY ──
+function renderHistory() {
+  const container = document.getElementById('history-content');
+  const entries = getEntries();
+
+  if (!entries.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <p>No entries yet. Start logging!</p>
+      </div>`;
+    return;
+  }
+
+  // Group by YYYY-MM
+  const groups = {};
+  for (const e of entries) {
+    const key = e.date ? e.date.slice(0,7) : 'Unknown';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  }
+
+  const sortedKeys = Object.keys(groups).sort().reverse();
+  let html = '';
+  for (const key of sortedKeys) {
+    const label = key !== 'Unknown' ? formatMonth(key) : 'Unknown';
+    html += `<div class="month-group"><div class="month-label">${label}</div>`;
+    for (const e of groups[key]) {
+      html += historyItem(e);
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function historyItem(e) {
+  const isHours = e.type === 'hours';
+  const icon = isHours
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`;
+  const meta = isHours
+    ? `${e.project} · ${formatDate(e.date)}`
+    : `${e.expense_type} · ${e.project} · ${formatDate(e.date)}`;
+  const val = isHours
+    ? `<span class="history-amount hours-val">${e.hours}h</span>`
+    : `<span class="history-amount expense-val">$${(e.amount||0).toFixed(2)}</span>`;
+  return `
+    <div class="history-item">
+      <div class="history-icon ${isHours ? 'hours' : 'expense'}">${icon}</div>
+      <div class="history-body">
+        <div class="history-desc">${e.description || '(no description)'}</div>
+        <div class="history-meta">${meta}</div>
+      </div>
+      ${val}
+    </div>`;
+}
+
+// ── HELPERS ──
+function setLoading(btnId, on) {
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('loading', on);
+  btn.disabled = on;
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m,10)-1]} ${parseInt(d,10)}, ${y}`;
+}
+
+function formatMonth(str) {
+  const [y, m] = str.split('-');
+  const months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  return `${months[parseInt(m,10)-1]} ${y}`;
+}
+
+// ── OFFLINE QUEUE RETRY ──
+async function retryQueue() {
+  const queue = getQueue();
+  if (!queue.length) return;
+  const remaining = [];
+  for (const entry of queue) {
+    try {
+      await uploadSubmission(entry);
+      if (entry.receipt_data) await uploadReceipt(entry.id, entry.receipt_data);
+    } catch {
+      remaining.push(entry);
+    }
+  }
+  saveQueue(remaining);
+  updateSyncStatus();
+}
+
+window.addEventListener('online', retryQueue);
+window.addEventListener('focus', retryQueue);
+
+// ── TOKEN MODAL ──
+function showTokenSetup() {
+  const modal = document.getElementById('token-modal');
+  modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  const existing = getToken();
+  if (existing) document.getElementById('token-input').value = existing;
+}
+function closeTokenModal() {
+  document.getElementById('token-modal').style.display = 'none';
+}
+function saveToken() {
+  const val = document.getElementById('token-input').value.trim();
+  if (val) {
+    setToken(val);
+    closeTokenModal();
+    updateSyncStatus();
+    showToast('Token saved ✓', 'success');
+    retryQueue();
+  } else {
+    showToast('Please enter a token', 'error');
+  }
+}
+// Show token setup on first load if no token
+document.addEventListener('DOMContentLoaded', () => {
+  if (!getToken()) setTimeout(showTokenSetup, 800);
+}, { once: true });
+</script>
+</body>
+</html>
