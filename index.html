@@ -584,6 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loadInvoices();
   renderHistory();
   updateSyncStatus();
+
+  // Prompt for token on first run
+  if (!getToken()) setTimeout(showTokenSetup, 800);
 });
 
 // ── TAB SWITCHING ──
@@ -1037,10 +1040,7 @@ function saveToken() {
     showToast('Please enter a token', 'error');
   }
 }
-// Show token setup on first load if no token
-document.addEventListener('DOMContentLoaded', () => {
-  if (!getToken()) setTimeout(showTokenSetup, 800);
-}, { once: true });
+
 </script>
 </body>
 </html>
