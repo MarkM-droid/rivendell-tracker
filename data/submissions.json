@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "3a767e2f-6340-408e-89cb-cfafeae071fc",
+    "timestamp": "2026-04-24T17:24:17.236Z",
+    "type": "hours",
+    "date": "2026-04-24",
+    "project": "Other",
+    "hours": 1,
+    "description": "Agentic Merchandising",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
+  }
+]
