@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rivendell-tracker-v5';
+const CACHE_NAME = 'rivendell-tracker-v6';
 const ASSETS = [
   '/rivendell-tracker/',
   '/rivendell-tracker/index.html',
