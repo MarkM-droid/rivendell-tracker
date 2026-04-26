@@ -26,5 +26,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "3b33a82a-1fb3-404c-be3b-b5818b27e664",
+    "timestamp": "2026-04-26T20:21:16.637Z",
+    "type": "hours",
+    "date": "2026-04-13",
+    "project": "Agentic Merchandising",
+    "hours": 4,
+    "description": "Agentic Merch pre work and agentic consulting methodology.",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
