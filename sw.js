@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rivendell-tracker-v6';
+const CACHE_NAME = 'rivendell-tracker-v7';
 const ASSETS = [
   '/rivendell-tracker/',
   '/rivendell-tracker/index.html',
@@ -28,9 +28,12 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Network-first for API calls; cache-first for static assets
-  if (event.request.url.includes('api.github.com')) {
-    event.respondWith(fetch(event.request));
+  // Network-first for API calls, invoices, and JSON data
+  if (event.request.url.includes('api.github.com') ||
+      event.request.url.includes('.html') ||
+      event.request.url.includes('invoices.json') ||
+      event.request.url.includes('submissions.json')) {
+    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
     return;
   }
   event.respondWith(
