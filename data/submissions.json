@@ -40,5 +40,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "046e382c-f615-4fca-bea2-8a8f1a348f16",
+    "timestamp": "2026-04-28T00:15:19.692Z",
+    "type": "hours",
+    "date": "2026-04-28",
+    "project": "Agentic Merchandising",
+    "hours": 7,
+    "description": "Meetings and environment cutover.",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
