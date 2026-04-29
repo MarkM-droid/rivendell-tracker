@@ -54,5 +54,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "0e73d382-4ac3-4ea2-9a9d-4222b95425b2",
+    "timestamp": "2026-04-29T19:33:07.460Z",
+    "type": "hours",
+    "date": "2026-04-28",
+    "project": "Agentic Merchandising",
+    "hours": 3,
+    "description": "Board deck and AI project structure.",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
