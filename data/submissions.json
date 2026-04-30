@@ -68,5 +68,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "95560856-963b-4bb1-a629-d63ad950c276",
+    "timestamp": "2026-04-30T15:22:34.105Z",
+    "type": "hours",
+    "date": "2026-04-29",
+    "project": "Agentic Merchandising",
+    "hours": 2.5,
+    "description": "Kroger and other",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
