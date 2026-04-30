@@ -900,7 +900,7 @@ function renderInvoices(invoices, container) {
 
 function openInvoice(file) {
   if (!file) return;
-  document.getElementById('invoice-frame').src = file;
+  document.getElementById('invoice-frame').src = file + '?t=' + Date.now();
   document.getElementById('invoice-overlay').style.display = 'flex';
 }
 function closeInvoice() {
