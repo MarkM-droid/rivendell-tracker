@@ -1,1 +1,11 @@
-[{"invoice_num":"00001","date":"2026-04-25","status":"Draft","total":23858.83,"file":"INV-00001-draft.html","description":"Agentic Merchandising — April 2026"}]
+[
+  {
+    "invoice_num": "00001",
+    "date": "2026-04-25",
+    "status": "Submitted",
+    "total": 23858.83,
+    "file": "INV-00001.html",
+    "description": "Agentic Merchandising \u2014 April 2026",
+    "submitted": "2026-05-01"
+  }
+]
