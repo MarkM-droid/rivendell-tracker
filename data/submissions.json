@@ -96,5 +96,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "31715e27-8769-4371-bddf-6a674b816675",
+    "timestamp": "2026-05-01T21:21:48.623Z",
+    "type": "hours",
+    "date": "2026-05-01",
+    "project": "Agentic Merchandising",
+    "hours": 2,
+    "description": "Calls and work",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
