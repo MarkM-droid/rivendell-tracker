@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rivendell-tracker-v8';
+const CACHE_NAME = 'rivendell-tracker-v9';
 const ASSETS = [
   '/rivendell-tracker/',
   '/rivendell-tracker/index.html',
@@ -33,7 +33,7 @@ self.addEventListener('fetch', event => {
       event.request.url.includes('.html') ||
       event.request.url.includes('invoices.json') ||
       event.request.url.includes('submissions.json')) {
-    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+    event.respondWith(fetch(event.request, {cache: 'no-store'}).catch(() => caches.match(event.request)));
     return;
   }
   event.respondWith(
