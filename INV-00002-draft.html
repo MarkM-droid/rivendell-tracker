@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice #00002 — Rivendell Advisors</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #222; margin: 0; padding: 16px; max-width: 780px; margin: 0 auto; }
+  .header { margin-bottom: 24px; }
+  .header h1 { font-size: 15px; font-weight: bold; margin: 0 0 2px; }
+  .header p { margin: 2px 0; color: #444; }
+  .invoice-title { text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 2px; margin: 20px 0 16px; }
+  .meta-table { width: 100%; margin-bottom: 20px; }
+  .meta-table td { padding: 3px 0; }
+  .meta-table td:first-child { font-weight: bold; width: 120px; }
+  .line-items { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .line-items th { background: #222; color: #fff; padding: 7px 8px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  .line-items th.right, .line-items td.right { text-align: right; }
+  .line-items td { padding: 7px 8px; border-bottom: 1px solid #eee; vertical-align: top; font-size: 12px; }
+  .totals { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .totals td { padding: 4px 8px; font-size: 12px; }
+  .totals td:first-child { text-align: right; color: #666; }
+  .totals td:last-child { text-align: right; width: 110px; }
+  .totals tr.grand-total td { font-weight: bold; font-size: 15px; border-top: 2px solid #222; padding-top: 8px; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #222; padding-bottom: 4px; margin: 16px 0 10px; font-weight: bold; }
+  .payment { background: #f5f5f5; padding: 16px; border-radius: 4px; }
+  .payment h3 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  .payment table td { padding: 3px 0; font-size: 12px; }
+  .payment table td:first-child { color: #666; width: 140px; }
+  .draft-banner { background: #fef3c7; border: 2px dashed #f59e0b; text-align: center; padding: 8px; font-weight: bold; color: #92400e; margin-bottom: 16px; border-radius: 4px; font-size: 12px; }
+  .updated { text-align: right; font-size: 11px; color: #999; margin-bottom: 8px; }
+  @media (max-width: 480px) { body { font-size: 11px; padding: 10px; } .line-items th, .line-items td { padding: 5px 4px; font-size: 11px; } }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">⚠ DRAFT — Not yet submitted</div>
+<div class="updated">Last updated: May 2, 2026</div>
+
+<div class="header">
+  <h1>Mark Matthews</h1>
+  <p>dba Rivendell Advisors LLC</p>
+  <p>11 South Windsor Dr, Rogers, AR 72758</p>
+  <p>Phone: (706) 341-5523</p>
+</div>
+
+<div class="invoice-title">INVOICE</div>
+
+<table class="meta-table">
+  <tr><td>Invoice #:</td><td>00002</td></tr>
+  <tr><td>Date:</td><td>May 1, 2026</td></tr>
+  <tr><td>Attention:</td><td>Chris Ray &amp; Charntelle McKibben</td></tr>
+  <tr><td>For:</td><td>Consulting Services — Agentic Merchandising</td></tr>
+</table>
+
+<div class="section-label">Professional Services</div>
+<table class="line-items">
+  <thead>
+    <tr>
+      <th>Date</th><th>Description</th><th class="right">Hrs</th><th class="right">Rate</th><th class="right">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>05/01/2026</td><td>Calls &amp; Work</td><td class="right">2.0</td><td class="right">$500.00</td><td class="right">$1,000.00</td></tr>
+  </tbody>
+</table>
+<table class="totals">
+  <tr><td>Services Subtotal (2.0 hrs)</td><td>$1,000.00</td></tr>
+  <tr><td>Expenses</td><td>$0.00</td></tr>
+  <tr class="grand-total"><td>TOTAL DUE</td><td>$1,000.00</td></tr>
+</table>
+
+<div class="section-label">Payment Instructions</div>
+<div class="payment">
+  <h3>Remit Payment Via ACH</h3>
+  <table>
+    <tr><td>Bank:</td><td>Encore Bank</td></tr>
+    <tr><td>Routing #:</td><td>082008583</td></tr>
+    <tr><td>Account #:</td><td>700245707</td></tr>
+    <tr><td>Account Name:</td><td>Rivendell Advisors LLC</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

@@ -7,5 +7,13 @@
     "file": "INV-00001.html",
     "description": "Agentic Merchandising \u2014 April 2026",
     "submitted": "2026-05-01"
+  },
+  {
+    "invoice_num": "00002",
+    "date": "2026-05-01",
+    "status": "Draft",
+    "total": 1000.0,
+    "file": "INV-00002-draft.html",
+    "description": "Agentic Merchandising \u2014 May 2026"
   }
 ]
