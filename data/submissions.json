@@ -110,5 +110,19 @@
     "miles": 0,
     "receipt_filename": "",
     "receipt_data": ""
+  },
+  {
+    "id": "a09d647e-7ec1-473d-80a8-f43eb6d4b14f",
+    "timestamp": "2026-05-05T02:29:54.521Z",
+    "type": "hours",
+    "date": "2026-05-05",
+    "project": "Agentic Merchandising",
+    "hours": 1.5,
+    "description": "Tech Calls and prework",
+    "expense_type": "",
+    "amount": 0,
+    "miles": 0,
+    "receipt_filename": "",
+    "receipt_data": ""
   }
 ]
