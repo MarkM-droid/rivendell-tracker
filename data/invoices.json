@@ -11,9 +11,10 @@
   {
     "invoice_num": "00002",
     "date": "2026-05-01",
-    "status": "Draft",
-    "total": 14000.0,
-    "file": "INV-00002-draft.html",
-    "description": "Agentic Merchandising \u2014 May 2026"
+    "status": "Submitted",
+    "total": 36000.0,
+    "file": "INV-00002.html",
+    "description": "Agentic Merchandising \u2014 May 2026",
+    "submitted": "2026-05-19"
   }
 ]
